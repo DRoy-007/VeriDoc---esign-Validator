@@ -10,6 +10,7 @@ import {
 import { reloadTrustStore } from "./trusted-ca-certs.server";
 import * as fs from "fs";
 import * as path from "path";
+import * as os from "os";
 
 // ---------------------------------------------------------------------------
 // Types shared with the client
@@ -228,10 +229,25 @@ export const trustCertificateFn = createServerFn({ method: "POST" })
     try {
       const sanitizedName = data.name.replace(/[^a-z0-9_-]/gi, '_');
       const fileName = `${sanitizedName}_${Date.now()}.cer`;
-      const rootsDir = path.join(process.cwd(), "src", "lib", "trust-store", "roots");
       
-      if (!fs.existsSync(rootsDir)) {
-        fs.mkdirSync(rootsDir, { recursive: true });
+      let rootsDir = path.join(process.cwd(), "src", "lib", "trust-store", "roots");
+      let useTmp = false;
+      
+      try {
+        if (!fs.existsSync(rootsDir)) {
+          fs.mkdirSync(rootsDir, { recursive: true });
+        }
+        // Test if the directory is writable. In serverless (e.g. Vercel), it might exist but be read-only.
+        fs.accessSync(rootsDir, fs.constants.W_OK);
+      } catch (err) {
+        useTmp = true;
+      }
+      
+      if (useTmp) {
+        rootsDir = path.join(os.tmpdir(), "trust-store", "roots");
+        if (!fs.existsSync(rootsDir)) {
+          fs.mkdirSync(rootsDir, { recursive: true });
+        }
       }
       
       const filePath = path.join(rootsDir, fileName);

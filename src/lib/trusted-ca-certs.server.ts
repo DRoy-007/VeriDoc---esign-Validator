@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as os from "os";
 import * as asn1js from "asn1js";
 import * as pkijs from "pkijs";
 
@@ -58,12 +59,18 @@ export function getTrustedRootCerts(): pkijs.Certificate[] {
   if (_trustedRoots) return _trustedRoots;
   
   _trustedRoots = [];
-  const rootsDir = path.join(process.cwd(), "src", "lib", "trust-store", "roots");
-  if (fs.existsSync(rootsDir)) {
-    const files = fs.readdirSync(rootsDir);
-    for (const file of files) {
-      const cert = parseCertificateFile(path.join(rootsDir, file));
-      if (cert) _trustedRoots.push(cert);
+  const dirs = [
+    path.join(process.cwd(), "src", "lib", "trust-store", "roots"),
+    path.join(os.tmpdir(), "trust-store", "roots")
+  ];
+  
+  for (const rootsDir of dirs) {
+    if (fs.existsSync(rootsDir)) {
+      const files = fs.readdirSync(rootsDir);
+      for (const file of files) {
+        const cert = parseCertificateFile(path.join(rootsDir, file));
+        if (cert) _trustedRoots.push(cert);
+      }
     }
   }
   return _trustedRoots;
