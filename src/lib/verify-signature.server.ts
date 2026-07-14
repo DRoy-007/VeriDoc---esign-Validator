@@ -53,7 +53,7 @@ export interface VerificationResult {
   integrityOk: boolean;
   certificateValid: boolean;
   isTrusted: boolean;
-  untrustedCert: {
+  untrustedCert?: {
     name: string;
     base64: string;
   } | null;
@@ -203,7 +203,7 @@ export async function verifySignature(
     const asn1Result = asn1js.fromBER(pkcs7Der.buffer.slice(
       pkcs7Der.byteOffset,
       pkcs7Der.byteOffset + pkcs7Der.byteLength,
-    ));
+    ) as ArrayBuffer);
     if (asn1Result.offset === -1) {
       notes.push("Failed to parse PKCS#7 ASN.1 structure.");
       return { signatureValid: false, signerCert: null, signingTime: null, algorithm, allCerts, notes };
@@ -299,7 +299,7 @@ export async function verifySignature(
         data: signedBytes.buffer.slice(
           signedBytes.byteOffset,
           signedBytes.byteOffset + signedBytes.byteLength,
-        ),
+        ) as ArrayBuffer,
         extendedMode: true,
       });
 
@@ -325,7 +325,7 @@ export async function verifySignature(
                 const expectedHashHex = Array.from(new Uint8Array(expectedHashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
                 
                 // Hash the signedBytes
-                const actualHashBuf = await crypto.digest({ name: hashAlgName.includes("256") ? "SHA-256" : "SHA-1" }, signedBytes);
+                const actualHashBuf = await crypto.digest({ name: hashAlgName.includes("256") ? "SHA-256" : "SHA-1" }, new Uint8Array(signedBytes));
                 const actualHashHex = Array.from(new Uint8Array(actualHashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
                 
                 if (expectedHashHex === actualHashHex) {
@@ -597,10 +597,6 @@ export async function verifyPdfSignature(
     // Signature math failed or document was modified
     status = "INVALID";
     notes.push("Document may have been modified after signing (signature mismatch).");
-  } else if (sigResult.signerCert && certValidity.expired) {
-    status = "EXPIRED";
-    notes.push(`Signing certificate expired on ${certValidity.notAfter.toISOString().slice(0, 10)}.`);
-    notes.push("Signature was mathematically valid at the time of signing.");
   } else if (sigResult.signerCert && certValidity.notYetValid) {
     status = "INVALID";
     notes.push(`Signing certificate is not yet valid (valid from ${certValidity.notBefore.toISOString().slice(0, 10)}).`);
@@ -613,6 +609,12 @@ export async function verifyPdfSignature(
   } else {
     status = "VERIFIED";
     notes.push("Document hash matches the embedded message digest.");
+  }
+
+  // Add disclaimer for expired certificates — the signature is still valid
+  // but users should be aware the certificate has expired
+  if (sigResult.signerCert && certValidity.expired && status !== "INVALID") {
+    notes.push(`⚠ Disclaimer: Signing certificate expired on ${certValidity.notAfter.toISOString().slice(0, 10)}. The signature was cryptographically valid at the time of signing.`);
   }
 
   // If the signature is trusted but revoked
