@@ -28,6 +28,9 @@ export function Header() {
           <a href="#trusted" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Trusted CAs
           </a>
+          <a href="#faq" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            FAQ
+          </a>
           <button
             onClick={() => setFeedbackOpen(true)}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus:outline-none"
@@ -72,6 +75,13 @@ export function Header() {
             className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
           >
             Trusted CAs
+          </a>
+          <a
+            href="#faq"
+            onClick={() => setMenuOpen(false)}
+            className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+          >
+            FAQ
           </a>
           <button
             onClick={() => {

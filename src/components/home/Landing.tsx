@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { UploadIcon, LockIcon, StampIcon, ReportIcon, ShieldAlertIcon, XIcon } from "../icons";
 import { TRUSTED_INDIAN_CAS } from "@/lib/trusted-cas";
+import { FAQ } from "@/components/home/FAQ";
 
 function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
@@ -245,6 +246,8 @@ export function Landing({
           </div>
         </div>
       </section>
+
+      <FAQ />
     </>
   );
 }
