@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UploadIcon, LockIcon, StampIcon, ReportIcon, ShieldAlertIcon, XIcon } from "../icons";
+import { UploadIcon, LockIcon, StampIcon, ReportIcon, ShieldAlertIcon, XIcon, ClockIcon, CheckIcon } from "../icons";
 import { TRUSTED_INDIAN_CAS } from "@/lib/trusted-cas";
 
 function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
@@ -26,6 +26,37 @@ function CloudHint({ label, href, color }: { label: string; href: string; color:
       />
       <span>{label}</span>
     </a>
+  );
+}
+
+function FaqItem({ icon, question, children }: { icon: React.ReactNode; question: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden transition-all">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-3 p-4 sm:p-5 text-left hover:bg-accent/50 transition"
+      >
+        <div className="shrink-0">{icon}</div>
+        <span className="flex-1 font-medium text-sm sm:text-base">{question}</span>
+        <svg
+          viewBox="0 0 24 24"
+          className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      {open && (
+        <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0 text-sm text-foreground/80 border-t border-border/50">
+          <div className="pt-3">{children}</div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -243,6 +274,108 @@ export function Landing({
               We proactively update our trust store, but some sub-CAs might be missing. If the issuer's certificate is embedded in the PDF, you can manually add it to your trust store using the <strong>Add to Trusted CAs</strong> button on the report.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section id="faq" className="mt-10 sm:mt-16 scroll-mt-20 border-t border-border/60 pt-10 sm:pt-16">
+        <h2 className="text-xl sm:text-2xl">Frequently Asked Questions</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
+          Common questions about eSign verification and what to do when things don't go as expected.
+        </p>
+
+        <div className="mt-6 sm:mt-8 space-y-3">
+          <FaqItem
+            icon={<ShieldAlertIcon className="h-5 w-5 text-warning" />}
+            question="My eSign shows 'Untrusted' — what should I do?"
+          >
+            <p>
+              An <strong>Untrusted</strong> result means the signature is mathematically valid, but the signing certificate's issuer is not in our local trust store of licensed Indian Certifying Authorities (CAs).
+            </p>
+            <p className="mt-2">This can happen when:</p>
+            <ul className="mt-1 list-disc list-inside space-y-1">
+              <li>The document was signed by a sub-CA or intermediate CA not yet in our store.</li>
+              <li>The signer used a private or enterprise certificate not issued by a CCA-licensed CA.</li>
+              <li>A newly licensed CA root has not been added to our trust store yet.</li>
+            </ul>
+            <p className="mt-3 font-medium">What you can do:</p>
+            <ul className="mt-1 list-disc list-inside space-y-1">
+              <li>Use the <strong>"Add to Trusted CAs"</strong> button on the report to manually trust the issuer certificate if you know and trust the issuer.</li>
+              <li>Verify the document using <strong>Adobe Acrobat's signature panel</strong> or your CA's official verification tool as a second opinion.</li>
+              <li>Contact us if you believe a legitimate Indian CA is missing from our trust store.</li>
+            </ul>
+          </FaqItem>
+
+          <FaqItem
+            icon={<ClockIcon className="h-5 w-5 text-primary" />}
+            question="The signing certificate is expired — is my document still valid?"
+          >
+            <p>
+              <strong>Yes, most likely.</strong> Certificate expiry means the signer's digital certificate has passed its validity period. However, this does <strong>not</strong> mean the signature was invalid at the time of signing.
+            </p>
+            <p className="mt-2">
+              VeriDoc automatically validates signatures even when the certificate has expired. If the signature is cryptographically intact and the certificate chains to a trusted CA, the result will show as <strong>Verified</strong> with a disclaimer noting the certificate expiry date.
+            </p>
+            <p className="mt-2">In practice:</p>
+            <ul className="mt-1 list-disc list-inside space-y-1">
+              <li>Indian government documents (Aadhaar, PAN, DigiLocker) use certificates that may expire after 2–3 years, but the documents remain valid.</li>
+              <li>The signature proves the document was authentic <em>at the time it was signed</em>.</li>
+              <li>Look at the <strong>"Signed on"</strong> date in the report — if it falls within the certificate's validity period, the document is genuine.</li>
+            </ul>
+          </FaqItem>
+
+          <FaqItem
+            icon={<ShieldAlertIcon className="h-5 w-5 text-warning" />}
+            question="The CA (Certifying Authority) is not added — how do I fix this?"
+          >
+            <p>
+              Our trust store contains roots from all major CCA-licensed Indian Certifying Authorities. However, some sub-CAs, intermediate certificates, or very new CAs might not be included yet.
+            </p>
+            <p className="mt-2 font-medium">To resolve this:</p>
+            <ul className="mt-1 list-disc list-inside space-y-1">
+              <li><strong>Use the "Add to Trusted CAs" button</strong> — if the signer's certificate is embedded in the PDF, you'll see this option on the verification report. Click it to add the issuer's certificate to your local trust store.</li>
+              <li><strong>Re-verify after adding</strong> — once added, click "Verify another PDF" and upload the same file again. It should now show as Verified.</li>
+              <li><strong>Download the CA root certificate</strong> from the CA's official website and manually add it if the embedded certificate isn't available.</li>
+            </ul>
+            <p className="mt-3 text-muted-foreground text-xs">
+              Note: Manually trusted certificates are stored in your session. Official root certificates from CCA-licensed CAs are built into VeriDoc permanently.
+            </p>
+          </FaqItem>
+
+          <FaqItem
+            icon={<XIcon className="h-5 w-5 text-destructive" />}
+            question="My PDF shows 'Invalid Signature' — why?"
+          >
+            <p>
+              An <strong>Invalid</strong> result means the document's content has been modified after the digital signature was applied. The cryptographic hash no longer matches.
+            </p>
+            <p className="mt-2">Common causes:</p>
+            <ul className="mt-1 list-disc list-inside space-y-1">
+              <li>The PDF was edited, annotated, or had a watermark added after signing.</li>
+              <li>The file was merged with another PDF or pages were rearranged.</li>
+              <li>The file was compressed, resized, or "flattened" by a PDF tool.</li>
+              <li>The file was re-saved by a PDF viewer that modified its internal structure.</li>
+            </ul>
+            <p className="mt-3 font-medium">
+              Solution: Always upload the original, untouched PDF exactly as downloaded from the source (DigiLocker, UMANG, e-Courts, etc.).
+            </p>
+          </FaqItem>
+
+          <FaqItem
+            icon={<CheckIcon className="h-5 w-5 text-success" />}
+            question="What does 'Verified' mean exactly?"
+          >
+            <p>
+              A <strong>Verified</strong> result means three things have been confirmed:
+            </p>
+            <ol className="mt-2 list-decimal list-inside space-y-1">
+              <li><strong>Integrity</strong> — The document has not been modified since it was signed. The cryptographic hash matches perfectly.</li>
+              <li><strong>Trust</strong> — The signing certificate chains to a trusted root CA licensed by CCA India.</li>
+              <li><strong>Authenticity</strong> — The signature was produced by the stated signer using their private key.</li>
+            </ol>
+            <p className="mt-3 text-muted-foreground">
+              If the certificate was expired at the time of verification (but valid when the document was signed), you'll see a disclaimer note — the document is still considered genuine.
+            </p>
+          </FaqItem>
         </div>
       </section>
     </>

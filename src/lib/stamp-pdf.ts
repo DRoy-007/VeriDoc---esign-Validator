@@ -127,11 +127,7 @@ export async function stampPdf(
     showCheck = false;
   }
 
-  // For expired override cases that resulted in VERIFIED
-  if (report.expiredOverride && report.status === "VERIFIED") {
-    title = "Signature valid";
-    showCheck = true;
-  }
+
 
   const pages = pdf.getPages();
   if (pages.length === 0) return pdf.save();
