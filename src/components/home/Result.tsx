@@ -60,6 +60,8 @@ export function DetailCard({ title, children }: { title: string; children: React
   );
 }
 
+import { FeedbackModal } from "@/components/FeedbackModal";
+
 export function Result({
   report,
   fileBuf,
@@ -73,9 +75,10 @@ export function Result({
 }) {
   const [stamping, setStamping] = useState(false);
   const [trusting, setTrusting] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const s = report.status;
   const tone = toneFor(s);
-
+  
   const downloadStamped = async () => {
     if (s === "NO_SIGNATURE") return;
     setStamping(true);
@@ -153,14 +156,14 @@ export function Result({
               <button
                 onClick={downloadStamped}
                 disabled={stamping}
-                className="w-full sm:w-auto rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
+                className="w-full sm:w-auto rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60 cursor-pointer"
               >
                 {stamping ? "Preparing…" : "Download stamped PDF"}
               </button>
             )}
             <button
               onClick={downloadJson}
-              className="w-full sm:w-auto rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium transition hover:bg-accent"
+              className="w-full sm:w-auto rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium transition hover:bg-accent cursor-pointer"
             >
               Download JSON report
             </button>
@@ -199,7 +202,7 @@ export function Result({
           <button
             onClick={handleTrustCertificate}
             disabled={trusting}
-            className="shrink-0 rounded-lg bg-warning px-4 py-2 text-sm font-medium text-warning-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
+            className="shrink-0 rounded-lg bg-warning px-4 py-2 text-sm font-medium text-warning-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60 cursor-pointer"
           >
             {trusting ? "Adding..." : "Add to Trusted CAs"}
           </button>
@@ -220,14 +223,31 @@ export function Result({
         </p>
       </DetailCard>
 
+      <div className="rounded-xl border border-border bg-card/50 p-5 text-center flex flex-col items-center gap-3">
+        <div>
+          <h4 className="font-serif text-lg font-semibold">How was your experience?</h4>
+          <p className="text-sm text-muted-foreground mt-1">
+            Let us know if you found VeriDoc helpful or if you encountered any issues.
+          </p>
+        </div>
+        <button
+          onClick={() => setFeedbackOpen(true)}
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition hover:bg-accent cursor-pointer focus:outline-none"
+        >
+          Share Feedback
+        </button>
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <button
           onClick={onReset}
-          className="w-full sm:w-auto rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+          className="w-full sm:w-auto rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 cursor-pointer"
         >
           ↩ Verify another PDF
         </button>
       </div>
+
+      <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </section>
   );
 }

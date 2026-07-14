@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { FeedbackModal } from "@/components/FeedbackModal";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
     <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-50">
@@ -26,12 +28,18 @@ export function Header() {
           <a href="#trusted" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Trusted CAs
           </a>
+          <button
+            onClick={() => setFeedbackOpen(true)}
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus:outline-none"
+          >
+            Share Feedback
+          </button>
         </nav>
 
         {/* Mobile hamburger button */}
         <button
           id="mobile-menu-toggle"
-          className="sm:hidden grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-foreground transition hover:bg-accent"
+          className="sm:hidden grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-foreground transition hover:bg-accent cursor-pointer"
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="Toggle navigation menu"
           aria-expanded={menuOpen}
@@ -65,8 +73,19 @@ export function Header() {
           >
             Trusted CAs
           </a>
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              setFeedbackOpen(true);
+            }}
+            className="text-left block w-full rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer focus:outline-none"
+          >
+            Share Feedback
+          </button>
         </nav>
       )}
+
+      <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </header>
   );
 }
