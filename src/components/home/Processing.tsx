@@ -11,7 +11,7 @@ export const STEPS = [
 
 export function Processing({ file, step }: { file: File; step: number }) {
   return (
-    <section className="mx-auto mt-16 max-w-2xl">
+    <section className="mx-auto mt-16 max-w-2xl px-4 sm:px-0 animate-fade-in-up">
       <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">

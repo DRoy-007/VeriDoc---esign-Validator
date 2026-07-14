@@ -18,13 +18,13 @@ function CloudHint({ label, href, color }: { label: string; href: string; color:
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-2.5 py-1 text-foreground/80 transition hover:bg-accent"
+      className="flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-2.5 py-1 text-foreground/80 transition hover:bg-accent justify-center"
     >
       <span
-        className="h-2 w-2 rounded-full"
+        className="h-2 w-2 shrink-0 rounded-full"
         style={{ backgroundColor: color }}
       />
-      Open {label}
+      <span>{label}</span>
     </a>
   );
 }
@@ -47,24 +47,25 @@ export function Landing({
 
   return (
     <>
-      <section className="mx-auto mt-20 max-w-3xl text-center">
-        <h1 className="text-4xl sm:text-5xl">Verify any Indian eSign.</h1>
-        <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
+      <section className="mx-auto mt-10 sm:mt-20 max-w-3xl text-center px-2">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl">Verify any Indian eSign.</h1>
+        <p className="mx-auto mt-3 sm:mt-4 max-w-xl text-base sm:text-lg text-muted-foreground">
           Instantly validate digitally signed PDFs against all official
-          Certifying Authorities. Fully private, browser-based processing.
+          Certifying Authorities. Secure server verification — your document is{" "}
+          <strong>never stored or shared</strong>.
         </p>
 
-        <div className="mx-auto mt-10 max-w-lg">
-          <div className="flex justify-center gap-4 mb-4">
+        <div className="mx-auto mt-6 sm:mt-10 max-w-lg">
+          <div className="flex justify-center gap-2 sm:gap-4 mb-4">
             <button
               onClick={() => setMode("file")}
-              className={`text-sm font-medium px-4 py-1.5 rounded-full transition ${mode === "file" ? "bg-primary text-primary-foreground" : "bg-card border hover:bg-accent"}`}
+              className={`text-sm font-medium px-3 sm:px-4 py-1.5 rounded-full transition ${mode === "file" ? "bg-primary text-primary-foreground" : "bg-card border hover:bg-accent"}`}
             >
               Upload PDF
             </button>
             <button
               onClick={() => setMode("url")}
-              className={`text-sm font-medium px-4 py-1.5 rounded-full transition ${mode === "url" ? "bg-primary text-primary-foreground" : "bg-card border hover:bg-accent"}`}
+              className={`text-sm font-medium px-3 sm:px-4 py-1.5 rounded-full transition ${mode === "url" ? "bg-primary text-primary-foreground" : "bg-card border hover:bg-accent"}`}
             >
               Import from Link
             </button>
@@ -72,8 +73,11 @@ export function Landing({
 
           {mode === "file" ? (
             <div
+              role="button"
+              tabIndex={0}
+              aria-label="Click or drag a PDF file here to upload and verify"
               className={[
-                "group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-background/50 p-12 text-center transition-all",
+                "group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-background/50 p-8 sm:p-12 text-center transition-all",
                 dragOver
                   ? "border-primary bg-primary/5 scale-[1.02]"
                   : "border-border hover:border-primary/50 hover:bg-card/50",
@@ -89,17 +93,19 @@ export function Landing({
                 onFiles(e.dataTransfer.files);
               }}
               onClick={openPicker}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") openPicker(); }}
             >
-              <div className="grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110 group-hover:bg-primary/20">
-                <UploadIcon className="h-6 w-6" />
+              <div className="grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110 group-hover:bg-primary/20">
+                <UploadIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h3 className="mt-5 text-lg font-medium">Click or drag PDF to verify</h3>
-              <div className="mt-1 text-sm text-muted-foreground">
+              <h3 className="mt-4 sm:mt-5 text-base sm:text-lg font-medium">Click or drag PDF to verify</h3>
+              <div className="mt-1 text-xs sm:text-sm text-muted-foreground">
                 PDF only · up to 20 MB · processed locally
               </div>
               <button
                 type="button"
-                className="mt-6 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+                onClick={(e) => { e.stopPropagation(); openPicker(); }}
+                className="mt-5 sm:mt-6 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
               >
                 Choose PDF
               </button>
@@ -114,7 +120,7 @@ export function Landing({
                 hosted PDF. Use the file's <b>direct download</b> URL.
               </p>
               <form
-                className="mt-3 flex gap-2"
+                className="mt-3 flex flex-col sm:flex-row gap-2"
                 onSubmit={(e) => {
                   e.preventDefault();
                   onImportUrl(url);
@@ -130,12 +136,12 @@ export function Landing({
                 />
                 <button
                   type="submit"
-                  className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+                  className="w-full sm:w-auto rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
                 >
                   Fetch
                 </button>
               </form>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs">
+              <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
                 <CloudHint
                   label="Google Drive"
                   href="https://drive.google.com"
@@ -163,7 +169,7 @@ export function Landing({
       </section>
 
 
-      <section id="privacy" className="mt-16 grid gap-4 sm:grid-cols-3">
+      <section id="privacy" className="mt-10 sm:mt-16 grid gap-4 sm:grid-cols-3">
         <FeatureCard
           icon={<LockIcon className="h-5 w-5" />}
           title="Private by default"
@@ -181,31 +187,34 @@ export function Landing({
         />
       </section>
 
-      <section id="trusted" className="mt-16">
-        <h2 className="text-2xl">Trusted Indian Certifying Authorities</h2>
+      <section id="trusted" className="mt-10 sm:mt-16 scroll-mt-20">
+        <h2 className="text-xl sm:text-2xl">Trusted Indian Certifying Authorities</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           We match against roots issued by CCA India licensed CAs.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           {TRUSTED_INDIAN_CAS.map((ca) => (
-            <span
+            <a
               key={ca.shortName}
-              className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground/80"
+              href={ca.website}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground/80 transition hover:bg-accent hover:border-primary/40 hover:text-foreground"
               title={ca.name}
             >
               {ca.shortName}
-            </span>
+            </a>
           ))}
         </div>
       </section>
 
-      <section id="guide" className="mt-16 border-t border-border/60 pt-16">
-        <h2 className="text-2xl">Understanding Verification Results</h2>
+      <section id="guide" className="mt-10 sm:mt-16 scroll-mt-20 border-t border-border/60 pt-10 sm:pt-16">
+        <h2 className="text-xl sm:text-2xl">Understanding Verification Results</h2>
         <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
           Digital signatures depend on strict cryptographic math and trust chains. If your document fails verification, it is usually for one of the following reasons:
         </p>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 text-left">
+        <div className="mt-6 sm:mt-8 grid gap-6 sm:grid-cols-2 text-left">
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="font-medium text-destructive flex items-center gap-2">
               <XIcon className="h-5 w-5" /> Why is my PDF Invalid?
