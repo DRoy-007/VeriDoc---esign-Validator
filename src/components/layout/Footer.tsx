@@ -1,4 +1,9 @@
+import { useState } from "react";
+import { FeedbackModal } from "@/components/FeedbackModal";
+
 export function Footer() {
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+
   return (
     <footer id="privacy-notice" className="border-t border-border/60">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 text-xs text-muted-foreground">
@@ -15,10 +20,18 @@ export function Footer() {
           </span>
           <span className="flex items-center gap-4 shrink-0">
             <a href="#privacy-notice" className="hover:text-foreground transition-colors">Privacy & Terms</a>
+            <button
+              onClick={() => setFeedbackOpen(true)}
+              className="hover:text-foreground transition-colors cursor-pointer focus:outline-none"
+            >
+              Feedback
+            </button>
             <a href="https://github.com/DRoy-007/VeriDoc---esign-Validator" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">Open Source</a>
           </span>
         </div>
       </div>
+
+      <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </footer>
   );
 }
