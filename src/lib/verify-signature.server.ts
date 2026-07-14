@@ -487,6 +487,7 @@ export async function validateChainPKI(
  */
 export async function verifyPdfSignature(
   fileBytes: Uint8Array,
+  options?: { skipExpiry?: boolean },
 ): Promise<VerificationResult> {
   const notes: string[] = [];
   const meta = scanPdfMeta(fileBytes);
@@ -597,10 +598,20 @@ export async function verifyPdfSignature(
     // Signature math failed or document was modified
     status = "INVALID";
     notes.push("Document may have been modified after signing (signature mismatch).");
-  } else if (sigResult.signerCert && certValidity.expired) {
+  } else if (sigResult.signerCert && certValidity.expired && !options?.skipExpiry) {
     status = "EXPIRED";
     notes.push(`Signing certificate expired on ${certValidity.notAfter.toISOString().slice(0, 10)}.`);
     notes.push("Signature was mathematically valid at the time of signing.");
+  } else if (sigResult.signerCert && certValidity.expired && options?.skipExpiry) {
+    // Expiry check skipped by user — still note the expiry date
+    notes.push(`Signing certificate expired on ${certValidity.notAfter.toISOString().slice(0, 10)} (expiry check skipped by user).`);
+    if (!isTrusted) {
+      status = "UNTRUSTED";
+      notes.push("Certificate chain does not terminate at a trusted Indian licensed CA.");
+    } else {
+      status = "VERIFIED";
+      notes.push("Document hash matches the embedded message digest.");
+    }
   } else if (sigResult.signerCert && certValidity.notYetValid) {
     status = "INVALID";
     notes.push(`Signing certificate is not yet valid (valid from ${certValidity.notBefore.toISOString().slice(0, 10)}).`);
