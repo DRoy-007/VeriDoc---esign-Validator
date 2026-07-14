@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
-import { verifyPdf, verifyPdfSkipExpiry, type VerificationReport } from "@/lib/verify-pdf";
+import { verifyPdf, type VerificationReport } from "@/lib/verify-pdf";
 import { IndiaBackdrop } from "@/components/IndiaBackdrop";
 
 import { Header } from "@/components/layout/Header";
@@ -86,34 +86,6 @@ function Home() {
     }
   }, []);
 
-  const startSkipExpiry = useCallback(async (f: File) => {
-    setError(null);
-    setPhase("processing");
-    setStep(0);
-    try {
-      const buf = await f.arrayBuffer();
-      setFileBuf(buf);
-      const verifyPromise = verifyPdfSkipExpiry(f);
-      for (let i = 0; i < STEPS.length - 1; i++) {
-        setStep(i);
-        await new Promise((r) => setTimeout(r, 380 + Math.random() * 220));
-      }
-      setStep(STEPS.length - 1);
-      const rep = await verifyPromise;
-      setReport(rep);
-      setPhase("done");
-    } catch (e) {
-      console.error(e);
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      if (msg.includes("fetch") || msg.includes("network") || msg.includes("Failed")) {
-        setError("Network error — couldn't reach the verification server. Please check your connection and try again.");
-      } else {
-        setError("We couldn't verify this PDF. It may be corrupted, password-protected, or in an unsupported format.");
-      }
-      setPhase("error");
-    }
-  }, []);
-
   const onFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
     start(files[0]);
@@ -178,7 +150,6 @@ function Home() {
             fileBuf={fileBuf}
             onReset={reset}
             onReverify={() => start(file!)}
-            onVerifyExpired={() => startSkipExpiry(file!)}
           />
         )}
 
