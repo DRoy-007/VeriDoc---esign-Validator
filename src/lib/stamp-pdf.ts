@@ -145,54 +145,62 @@ export async function stampPdf(
   let stampW = 260;
   let stampH = 95;
 
-  // Try to find the signature annotation to get its exact position and size.
-  // We do NOT remove annotations — that would invalidate the signature in Adobe.
+  // Find the signature annotation rect for positioning, then REMOVE all
+  // signature widget annotations so the original e-sign visual is completely
+  // eliminated. This is a stamped copy — the original signature structure
+  // is intentionally replaced by our verification stamp.
+  let foundRect = false;
   try {
     const annots = page.node.Annots();
     if (annots instanceof PDFArray) {
-      for (let i = 0; i < annots.size(); i++) {
+      // Iterate backwards so we can safely remove entries
+      for (let i = annots.size() - 1; i >= 0; i--) {
         const annot = annots.lookup(i);
         if (annot instanceof PDFDict) {
           const subtype = annot.lookup(PDFName.of("Subtype"));
           const ft = annot.lookup(PDFName.of("FT"));
 
           if (subtype?.toString() === "/Widget" && ft?.toString() === "/Sig") {
-            const rect = annot.lookup(PDFName.of("Rect"));
-            if (rect instanceof PDFArray && rect.size() >= 4) {
-              const r0 = rect.lookup(0);
-              const r1 = rect.lookup(1);
-              const r2 = rect.lookup(2);
-              const r3 = rect.lookup(3);
+            // Capture the rect from the FIRST signature found (for positioning)
+            if (!foundRect) {
+              const rect = annot.lookup(PDFName.of("Rect"));
+              if (rect instanceof PDFArray && rect.size() >= 4) {
+                const r0 = rect.lookup(0);
+                const r1 = rect.lookup(1);
+                const r2 = rect.lookup(2);
+                const r3 = rect.lookup(3);
 
-              if (
-                r0 instanceof PDFNumber &&
-                r1 instanceof PDFNumber &&
-                r2 instanceof PDFNumber &&
-                r3 instanceof PDFNumber
-              ) {
-                const llx = r0.asNumber();
-                const lly = r1.asNumber();
-                const urx = r2.asNumber();
-                const ury = r3.asNumber();
-
-                // Only use if the rect has meaningful dimensions (> 10x10)
-                const w = urx - llx;
-                const h = ury - lly;
-                if (w > 10 && h > 10) {
-                  stampX = llx;
-                  stampY = lly;
-                  stampW = w;
-                  stampH = h;
-                  break; // Use the first signature field found
+                if (
+                  r0 instanceof PDFNumber &&
+                  r1 instanceof PDFNumber &&
+                  r2 instanceof PDFNumber &&
+                  r3 instanceof PDFNumber
+                ) {
+                  const llx = r0.asNumber();
+                  const lly = r1.asNumber();
+                  const urx = r2.asNumber();
+                  const ury = r3.asNumber();
+                  const w = urx - llx;
+                  const h = ury - lly;
+                  if (w > 10 && h > 10) {
+                    stampX = llx;
+                    stampY = lly;
+                    stampW = w;
+                    stampH = h;
+                    foundRect = true;
+                  }
                 }
               }
             }
+
+            // Remove the signature widget annotation completely
+            annots.remove(i);
           }
         }
       }
     }
   } catch (e) {
-    console.warn("Could not find signature annotation rect:", e);
+    console.warn("Could not process signature annotations:", e);
   }
 
   // ---------------------------------------------------------------------------
