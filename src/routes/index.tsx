@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const MAX_BYTES = 20 * 1024 * 1024;
+const MAX_BYTES = 100 * 1024 * 1024;
 
 type Phase = "idle" | "processing" | "done" | "error";
 
@@ -45,7 +45,7 @@ function Home() {
       return;
     }
     if (f.size > MAX_BYTES) {
-      setError("File exceeds the 20 MB limit.");
+      setError("File exceeds the 100 MB limit.");
       setPhase("error");
       return;
     }

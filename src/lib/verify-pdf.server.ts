@@ -49,7 +49,7 @@ export interface VerificationReport {
 const DISCLAIMER =
   "This tool provides an assistive verification result and is not a legally binding certification. For official verification, use Adobe Acrobat's signature panel or your CA's utility.";
 
-const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
 
 // ---------------------------------------------------------------------------
 // Convert engine result → client-facing report
