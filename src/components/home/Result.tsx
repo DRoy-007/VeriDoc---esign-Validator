@@ -191,7 +191,7 @@ export function Result({
       </div>
 
       {report.status === "UNTRUSTED" && report.untrustedCert && (
-        <div className="rounded-xl border border-warning/50 bg-warning/5 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="rounded-xl border border-warning/50 bg-warning/10 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div>
             <h3 className="font-medium text-warning-foreground">Untrusted Issuer: {report.untrustedCert.name}</h3>
             <p className="mt-1 text-sm text-foreground/80 max-w-xl">
