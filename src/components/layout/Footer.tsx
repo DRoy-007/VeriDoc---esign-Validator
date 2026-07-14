@@ -7,9 +7,9 @@ export function Footer() {
             Not affiliated with the Controller of Certifying Authorities (CCA) or the Government of India.
           </span>
           <span className="flex gap-4">
-            <a href="#" className="hover:text-foreground">Privacy</a>
-            <a href="#" className="hover:text-foreground">Terms</a>
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-foreground">Open Source</a>
+            <a href="#privacy" className="hover:text-foreground">Privacy</a>
+            <a href="#privacy" className="hover:text-foreground">Terms</a>
+            <a href="https://github.com/DRoy-007/VeriDoc---esign-Validator" target="_blank" rel="noreferrer" className="hover:text-foreground">Open Source</a>
           </span>
         </p>
       </div>

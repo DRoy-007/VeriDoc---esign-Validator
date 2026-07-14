@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { UploadIcon, LockIcon, StampIcon, ReportIcon, ShieldAlertIcon, XIcon } from "../icons";
 import { TRUSTED_INDIAN_CAS } from "@/lib/trusted-cas";
+import { HardDrive } from "lucide-react";
 
 function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
@@ -20,9 +21,9 @@ function CloudHint({ label, href, color }: { label: string; href: string; color:
       rel="noreferrer"
       className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-2.5 py-1 text-foreground/80 transition hover:bg-accent"
     >
-      <span
-        className="h-2 w-2 rounded-full"
-        style={{ backgroundColor: color }}
+      <HardDrive
+        className="h-3.5 w-3.5"
+        style={{ color: color }}
       />
       Open {label}
     </a>
