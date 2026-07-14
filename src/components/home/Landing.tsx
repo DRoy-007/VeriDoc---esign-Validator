@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { UploadIcon, LockIcon, StampIcon, ReportIcon, ShieldAlertIcon, XIcon } from "../icons";
 import { TRUSTED_INDIAN_CAS } from "@/lib/trusted-cas";
-import { HardDrive } from "lucide-react";
 
 function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
@@ -21,9 +20,9 @@ function CloudHint({ label, href, color }: { label: string; href: string; color:
       rel="noreferrer"
       className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-2.5 py-1 text-foreground/80 transition hover:bg-accent"
     >
-      <HardDrive
-        className="h-3.5 w-3.5"
-        style={{ color: color }}
+      <span
+        className="h-2 w-2 rounded-full"
+        style={{ backgroundColor: color }}
       />
       Open {label}
     </a>
@@ -164,7 +163,7 @@ export function Landing({
       </section>
 
 
-      <section className="mt-16 grid gap-4 sm:grid-cols-3">
+      <section id="privacy" className="mt-16 grid gap-4 sm:grid-cols-3">
         <FeatureCard
           icon={<LockIcon className="h-5 w-5" />}
           title="Private by default"
