@@ -105,6 +105,11 @@
   * {
     border-color: var(--color-border);
   }
+  html {
+    /* Offset anchor targets below the sticky header (~72px tall) */
+    scroll-padding-top: 80px;
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--color-background);
     background-image: url('/bg-indian.png');
@@ -120,6 +125,21 @@
     font-family: var(--font-serif);
     letter-spacing: -0.01em;
   }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.35s ease-out both;
 }
 
 @utility bg-grid {

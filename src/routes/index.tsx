@@ -125,7 +125,7 @@ function Home() {
       <IndiaBackdrop />
       <Header />
 
-      <main className="relative mx-auto max-w-5xl px-6 pb-24">
+      <main className="relative mx-auto max-w-5xl px-4 sm:px-6 pb-16 sm:pb-24">
         {phase === "idle" && (
           <Landing
             dragOver={dragOver}
