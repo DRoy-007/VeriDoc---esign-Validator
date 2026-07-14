@@ -132,7 +132,7 @@ export function Landing({
               </div>
               <h3 className="mt-4 sm:mt-5 text-base sm:text-lg font-medium">Click or drag PDF to verify</h3>
               <div className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                PDF only · up to 20 MB · processed locally
+                PDF only · up to 100 MB · processed locally
               </div>
               <button
                 type="button"
@@ -237,44 +237,6 @@ export function Landing({
               {ca.shortName}
             </a>
           ))}
-        </div>
-      </section>
-
-      <section id="guide" className="mt-10 sm:mt-16 scroll-mt-20 border-t border-border/60 pt-10 sm:pt-16">
-        <h2 className="text-xl sm:text-2xl">Understanding Verification Results</h2>
-        <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
-          Digital signatures depend on strict cryptographic math and trust chains. If your document fails verification, it is usually for one of the following reasons:
-        </p>
-
-        <div className="mt-6 sm:mt-8 grid gap-6 sm:grid-cols-2 text-left">
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-medium text-destructive flex items-center gap-2">
-              <XIcon className="h-5 w-5" /> Why is my PDF Invalid?
-            </h3>
-            <p className="mt-3 text-sm text-foreground/80">
-              An <strong>Invalid</strong> result means the cryptographic hash of the document no longer matches the signature. This happens if the PDF was <strong>modified after it was signed</strong>.
-            </p>
-            <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground list-disc list-inside">
-              <li>Did you add a watermark or stamp?</li>
-              <li>Did you merge it with another PDF?</li>
-              <li>Did you compress, resize, or "flatten" the file?</li>
-            </ul>
-            <p className="mt-4 text-sm font-medium text-foreground">
-              Solution: Always upload the pristine, untouched original PDF directly downloaded from the source.
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="font-medium text-warning flex items-center gap-2">
-              <ShieldAlertIcon className="h-5 w-5" /> Why is it Untrusted?
-            </h3>
-            <p className="mt-3 text-sm text-foreground/80">
-              An <strong>Untrusted</strong> result means the mathematical signature is perfectly valid and intact, but the certificate issuer is not found in our local trust store of authorized Indian roots.
-            </p>
-            <p className="mt-4 text-sm text-muted-foreground">
-              We proactively update our trust store, but some sub-CAs might be missing. If the issuer's certificate is embedded in the PDF, you can manually add it to your trust store using the <strong>Add to Trusted CAs</strong> button on the report.
-            </p>
-          </div>
         </div>
       </section>
 
