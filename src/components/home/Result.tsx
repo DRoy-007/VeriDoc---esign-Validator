@@ -42,9 +42,9 @@ export function toneFor(s: VerificationStatus) {
 
 export function Row({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex justify-between gap-4 text-sm">
-      <span className="text-muted-foreground">{k}</span>
-      <span className="max-w-[65%] truncate text-right font-medium" title={v}>{v}</span>
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4 gap-1 text-sm">
+      <span className="text-muted-foreground shrink-0">{k}</span>
+      <span className="max-w-full sm:max-w-[65%] break-all sm:text-right font-medium" title={v}>{v}</span>
     </div>
   );
 }
@@ -148,19 +148,19 @@ export function Result({
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:shrink-0">
             {s !== "NO_SIGNATURE" && (
               <button
                 onClick={downloadStamped}
                 disabled={stamping}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
+                className="w-full sm:w-auto rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
               >
                 {stamping ? "Preparing…" : "Download stamped PDF"}
               </button>
             )}
             <button
               onClick={downloadJson}
-              className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium transition hover:bg-accent"
+              className="w-full sm:w-auto rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium transition hover:bg-accent"
             >
               Download JSON report
             </button>
@@ -179,6 +179,8 @@ export function Result({
           <Row k="Signer" v={report.signer ?? "—"} />
           <Row k="Issuer" v={report.issuer ?? "—"} />
           <Row k="Signed on" v={report.signed_on ?? "—"} />
+          {report.reason && <Row k="Reason" v={report.reason} />}
+          {report.location && <Row k="Location" v={report.location} />}
           <Row k="Algorithm" v={report.algorithm ?? "—"} />
           <Row k="Certificate" v={report.certificate} />
           <Row k="Integrity" v={report.integrity} />
@@ -218,12 +220,12 @@ export function Result({
         </p>
       </DetailCard>
 
-      <div className="flex justify-center">
+      <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <button
           onClick={onReset}
-          className="rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium transition hover:bg-accent"
+          className="w-full sm:w-auto rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
         >
-          Verify another PDF
+          ↩ Verify another PDF
         </button>
       </div>
     </section>
