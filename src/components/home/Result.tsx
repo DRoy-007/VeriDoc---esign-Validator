@@ -65,14 +65,17 @@ export function Result({
   fileBuf,
   onReset,
   onReverify,
+  onVerifyExpired,
 }: {
   report: VerificationReport;
   fileBuf: ArrayBuffer;
   onReset: () => void;
   onReverify: () => void;
+  onVerifyExpired: () => void;
 }) {
   const [stamping, setStamping] = useState(false);
   const [trusting, setTrusting] = useState(false);
+  const [verifyingExpired, setVerifyingExpired] = useState(false);
   const s = report.status;
   const tone = toneFor(s);
 
@@ -188,7 +191,7 @@ export function Result({
       </div>
 
       {report.status === "UNTRUSTED" && report.untrustedCert && (
-        <div className="rounded-xl border border-warning/50 bg-warning/5 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="rounded-xl border border-warning/50 bg-warning/10 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div>
             <h3 className="font-medium text-warning-foreground">Untrusted Issuer: {report.untrustedCert.name}</h3>
             <p className="mt-1 text-sm text-foreground/80 max-w-xl">
@@ -203,6 +206,48 @@ export function Result({
           >
             {trusting ? "Adding..." : "Add to Trusted CAs"}
           </button>
+        </div>
+      )}
+
+      {report.status === "EXPIRED" && (
+        <div className="rounded-xl border border-warning/50 bg-warning/10 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div>
+            <h3 className="font-medium text-warning-foreground flex items-center gap-2">
+              <ClockIcon className="h-5 w-5" /> Expired Certificate
+            </h3>
+            <p className="mt-1 text-sm text-foreground/80 max-w-xl">
+              The signing certificate has expired, but the signature may still have been cryptographically valid at the time of signing.
+              You can re-validate the signature while ignoring the certificate expiry date.
+            </p>
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              <strong>Note:</strong> This will still check the signature integrity and trust chain — only the expiry date check is skipped.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setVerifyingExpired(true);
+              onVerifyExpired();
+            }}
+            disabled={verifyingExpired}
+            className="shrink-0 rounded-lg bg-warning px-4 py-2 text-sm font-medium text-warning-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
+          >
+            {verifyingExpired ? "Validating…" : "Validate ignoring expiry"}
+          </button>
+        </div>
+      )}
+
+      {report.expiredOverride && report.status === "VERIFIED" && (
+        <div className="rounded-xl border border-success/40 bg-success/5 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="grid h-10 w-10 place-items-center rounded-full bg-success text-white shrink-0">
+            <CheckIcon className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-medium text-success">Verified (Expiry Overridden)</h3>
+            <p className="mt-1 text-sm text-foreground/80 max-w-xl">
+              The signature is cryptographically valid and the certificate chains to a trusted CA.
+              The certificate expiry was explicitly overridden by you. The certificate status still shows as "Expired" in the details above.
+            </p>
+          </div>
         </div>
       )}
 

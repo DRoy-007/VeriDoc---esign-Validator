@@ -44,6 +44,7 @@ export interface VerificationReport {
     name: string;
     base64: string;
   } | null;
+  expiredOverride?: boolean;
 }
 
 const DISCLAIMER =
@@ -58,6 +59,7 @@ function buildReport(
   fileName: string,
   fileSize: number,
   result: VerificationResult,
+  options?: { skipExpiry?: boolean },
 ): VerificationReport {
   const now = new Date().toISOString();
 
@@ -104,6 +106,14 @@ function buildReport(
     signed_on = result.signatureInfo.signingTime.toISOString();
   }
 
+  // Determine if this is an expired override scenario:
+  // skipExpiry was used AND the cert is expired but status came back as VERIFIED
+  const expiredOverride = !!(options?.skipExpiry && result.signatureInfo && certificate === "Expired" && result.status === "VERIFIED");
+
+  if (expiredOverride) {
+    result.notes.push("⚠ Certificate expiry was explicitly overridden by user. The signature is cryptographically valid but the certificate has expired.");
+  }
+
   return {
     status: result.status,
     file_name: fileName,
@@ -122,6 +132,7 @@ function buildReport(
     notes: result.notes,
     disclaimer: DISCLAIMER,
     untrustedCert: result.untrustedCert || null,
+    expiredOverride,
   };
 }
 
@@ -186,15 +197,18 @@ export const verifyPdfOnServer = createServerFn({ method: "POST" })
       });
     }
 
+    // Check if the user wants to skip expiry checks
+    const skipExpiry = formData.get("skipExpiry") === "true";
+
     try {
       // Read file into memory (FR5 — in-memory, no disk)
       const arrayBuffer = await file.arrayBuffer();
       const fileBytes = new Uint8Array(arrayBuffer);
 
       // Run the verification pipeline
-      const result = await verifyPdfSignature(fileBytes);
+      const result = await verifyPdfSignature(fileBytes, { skipExpiry });
 
-      return buildReport(fileName, fileSize, result);
+      return buildReport(fileName, fileSize, result, { skipExpiry });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error("PDF verification error:", e);

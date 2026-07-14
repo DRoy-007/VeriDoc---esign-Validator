@@ -33,6 +33,7 @@ export interface VerificationReport {
     name: string;
     base64: string;
   } | null;
+  expiredOverride?: boolean;
 }
 
 /**
@@ -42,6 +43,19 @@ export interface VerificationReport {
 export async function verifyPdf(file: File): Promise<VerificationReport> {
   const formData = new FormData();
   formData.append("file", file);
+
+  const report = await verifyPdfOnServer({ data: formData });
+  return report as VerificationReport;
+}
+
+/**
+ * Re-verify a PDF while explicitly skipping certificate expiry checks.
+ * This allows users to validate signatures whose certificates have expired.
+ */
+export async function verifyPdfSkipExpiry(file: File): Promise<VerificationReport> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("skipExpiry", "true");
 
   const report = await verifyPdfOnServer({ data: formData });
   return report as VerificationReport;
