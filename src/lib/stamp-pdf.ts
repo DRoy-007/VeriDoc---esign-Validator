@@ -176,7 +176,7 @@ export async function stampPdf(
       y: iconY,
       width: drawIconW,
       height: drawIconH,
-      opacity: 0.1, // Deeper, more visible watermark
+      opacity: 1.0, // Deeper, more visible watermark
     });
   }
 
