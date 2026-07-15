@@ -22,9 +22,6 @@ export function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden sm:flex items-center gap-6">
-          <a href="#guide" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            User Guide
-          </a>
           <a href="#trusted" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Trusted CAs
           </a>
