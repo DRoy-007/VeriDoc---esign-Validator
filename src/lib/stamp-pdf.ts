@@ -167,8 +167,8 @@ export async function stampPdf(
       drawIconW = drawIconH * iconAspect;
     }
 
-    // Position on right side of stamp, vertically centered
-    const iconX = stampX + stampW * 0.55 - drawIconW * 0.2;
+    // Center the icon in the stamp area
+    const iconX = stampX + (stampW - drawIconW) / 2;
     const iconY = stampY + (stampH - drawIconH) / 2;
 
     page.drawImage(iconImage, {
