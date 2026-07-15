@@ -81,10 +81,11 @@ export async function stampPdf(
   const { width, height } = page.getSize();
 
   // Default stamp position and size (top-right corner)
-  let stampX = width - 280;
-  let stampY = height - 115;
-  let stampW = 260;
-  let stampH = 95;
+  // Sized large enough to show all metadata lines
+  let stampX = width - 340;
+  let stampY = height - 200;
+  let stampW = 320;
+  let stampH = 180;
 
   // Find the signature annotation rect for positioning, then REMOVE all
   // signature widget annotations so the original e-sign visual is completely
@@ -145,31 +146,29 @@ export async function stampPdf(
   }
 
   // ---------------------------------------------------------------------------
-  // Draw the icon image — centered in the stamp area as a watermark background
+  // Draw the icon image — positioned on right side, overlapping text like reference
   // ---------------------------------------------------------------------------
   if (iconImage) {
     const iconDims = iconImage.scale(1);
     const iconAspect = iconDims.width / iconDims.height;
 
-    // Icon should fill roughly 70% of the stamp height, centered
-    const maxIconH = stampH * 0.70;
-    const maxIconW = stampW * 0.45;
+    // Icon should fill roughly 75% of the stamp height
+    const maxIconH = stampH * 0.75;
+    const maxIconW = stampW * 0.50;
 
     let drawIconW: number;
     let drawIconH: number;
 
     if (iconAspect > 1) {
-      // Wider than tall
       drawIconW = Math.min(maxIconW, maxIconH * iconAspect);
       drawIconH = drawIconW / iconAspect;
     } else {
-      // Taller than wide
       drawIconH = Math.min(maxIconH, maxIconW / iconAspect);
       drawIconW = drawIconH * iconAspect;
     }
 
-    // Center the icon in the stamp area
-    const iconX = stampX + (stampW - drawIconW) / 2;
+    // Position on right side of stamp, vertically centered
+    const iconX = stampX + stampW * 0.55 - drawIconW * 0.2;
     const iconY = stampY + (stampH - drawIconH) / 2;
 
     page.drawImage(iconImage, {
@@ -177,7 +176,7 @@ export async function stampPdf(
       y: iconY,
       width: drawIconW,
       height: drawIconH,
-      opacity: 0.15, // Watermark-style, behind text
+      opacity: 0.8, // Deeper, more visible watermark
     });
   }
 
@@ -234,15 +233,7 @@ export async function stampPdf(
     lines.push({ text: `Date: ${year}.${month}.${day} ${hours}:${minutes}:${seconds} ${tzName}`, bold: false });
   }
 
-  // Certificate Authority / Issuer
-  if (report.issuer) {
-    lines.push({ text: sanitize(`CA: ${report.issuer}`), bold: false });
-  }
-
-  // Algorithm
-  if (report.algorithm) {
-    lines.push({ text: sanitize(`Algorithm: ${report.algorithm}`), bold: false });
-  }
+  // Certificate Authority and Algorithm intentionally omitted to match standard PDF reader visual metadata
 
   // ---------------------------------------------------------------------------
   // Layout calculations — dynamically scale text to fit the stamp area
@@ -250,19 +241,19 @@ export async function stampPdf(
   const contentLines = lines.filter(l => l.text.length > 0);
   const detailLines = contentLines.length - 1; // exclude title
 
-  // Title size: roughly 22-25% of stamp height, capped
+  // Title size: roughly 18-20% of stamp height, capped
   let titleSize = Math.min(
-    Math.max(10, stampH * 0.22),
-    Math.max(10, stampW * 0.08),
-    36
+    Math.max(6, stampH * 0.20),
+    Math.max(6, stampW * 0.08),
+    28
   );
 
   // Detail text size: fit remaining lines in remaining height
   const remainingH = stampH - titleSize - pad * 3;
   let textSize = Math.min(
-    Math.max(5, remainingH / Math.max(detailLines, 4) * 0.72),
-    Math.max(5, stampW * 0.035),
-    14
+    Math.max(4, remainingH / Math.max(detailLines, 3) * 0.7),
+    Math.max(4, stampW * 0.04),
+    13
   );
 
   // Ensure text doesn't overflow width — shrink if needed
