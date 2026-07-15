@@ -145,8 +145,8 @@ function FeedbackList() {
       <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground">
         <MessageSquare className="h-10 w-10 opacity-40" />
         <div className="text-center space-y-1">
-          <p className="text-sm font-medium text-foreground/80">Your feedback matters!</p>
-          <p className="text-xs">Switch to the "Submit Feedback" tab to share your experience with VeriDoc.</p>
+          <p className="text-sm font-medium text-foreground/80">No feedback yet</p>
+          <p className="text-xs">Be the first to share your experience with VeriDoc.</p>
         </div>
       </div>
     );
