@@ -71,11 +71,11 @@ export function FAQ() {
               key={item.id}
               value={item.id}
               className={cn(
-                "rounded-xl border bg-card/60 px-5 transition-colors hover:bg-card data-[state=open]:bg-card",
+                "rounded-xl border bg-card px-5 transition-colors hover:bg-card data-[state=open]:bg-card",
                 item.borderColor,
               )}
             >
-              <AccordionTrigger className="py-4 text-sm font-medium hover:no-underline gap-3">
+              <AccordionTrigger className="py-4 text-base sm:text-lg font-medium hover:no-underline gap-3">
                 <span className="flex items-center gap-3 text-left">
                   <Icon className={cn("h-5 w-5 shrink-0", item.iconColor)} />
                   {item.question}

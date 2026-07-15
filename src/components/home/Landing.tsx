@@ -39,7 +39,7 @@ function FaqItem({ icon, question, children }: { icon: React.ReactNode; question
         className="flex w-full items-center gap-3 p-4 sm:p-5 text-left hover:bg-accent/50 transition"
       >
         <div className="shrink-0">{icon}</div>
-        <span className="flex-1 font-medium text-sm sm:text-base">{question}</span>
+        <span className="flex-1 font-medium text-base sm:text-lg">{question}</span>
         <svg
           viewBox="0 0 24 24"
           className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}

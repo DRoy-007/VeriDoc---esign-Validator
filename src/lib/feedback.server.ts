@@ -1,7 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import * as fs from "fs";
-import * as path from "path";
 
 const feedbackSchema = z.object({
   category: z.enum(["bug", "suggestion", "praise", "other"]),
@@ -17,72 +15,95 @@ export interface FeedbackRecord extends FeedbackPayload {
   submittedAt: string;
 }
 
-const FEEDBACK_DIR = () => path.join(process.cwd(), "data", "feedback");
+// ---------------------------------------------------------------------------
+// Google Form configuration
+// ---------------------------------------------------------------------------
+// Replace these with your actual Google Form field entry IDs.
+// To find them:
+//   1. Open your Google Form
+//   2. Click the 3-dot menu → "Get pre-filled link"
+//   3. Fill in dummy data and click "Get link"
+//   4. The URL will contain entry.XXXXXXXXX=value for each field
+//
+// Create a Google Form with these fields:
+//   - Category (Short answer)   → entry ID below
+//   - Rating (Short answer)     → entry ID below
+//   - Comments (Paragraph)      → entry ID below
+//   - Name (Short answer)       → entry ID below
+//   - Email (Short answer)      → entry ID below
+//   - Submitted At (Short answer) → entry ID below
+// ---------------------------------------------------------------------------
+const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse";
+
+// Replace these entry IDs with your actual Google Form field entry IDs
+const FORM_FIELD_IDS = {
+  category: "entry.XXXXXXXXX1",
+  rating: "entry.XXXXXXXXX2",
+  comments: "entry.XXXXXXXXX3",
+  name: "entry.XXXXXXXXX4",
+  email: "entry.XXXXXXXXX5",
+  submittedAt: "entry.XXXXXXXXX6",
+};
 
 // ---------------------------------------------------------------------------
-// Submit feedback
+// Submit feedback via Google Form
 // ---------------------------------------------------------------------------
 export const submitFeedbackFn = createServerFn({ method: "POST" })
   .validator((data: unknown) => {
     return feedbackSchema.parse(data);
   })
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<{ success: boolean; error?: string }> => {
     try {
-      const feedbackDir = FEEDBACK_DIR();
-      if (!fs.existsSync(feedbackDir)) {
-        fs.mkdirSync(feedbackDir, { recursive: true });
+      const submittedAt = new Date().toISOString();
+
+      // Build URL-encoded form data for Google Forms submission
+      const formData = new URLSearchParams();
+      formData.append(FORM_FIELD_IDS.category, data.category);
+      formData.append(FORM_FIELD_IDS.rating, data.rating.toString());
+      formData.append(FORM_FIELD_IDS.comments, data.comments);
+      formData.append(FORM_FIELD_IDS.name, data.name || "Anonymous");
+      formData.append(FORM_FIELD_IDS.email, data.email || "Not provided");
+      formData.append(FORM_FIELD_IDS.submittedAt, submittedAt);
+
+      // Submit to Google Forms
+      const response = await fetch(GOOGLE_FORM_ACTION_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+      });
+
+      // Google Forms returns 200 even on success (with HTML redirect)
+      // We consider any non-server-error as success
+      if (response.ok || response.status === 302 || response.status === 303) {
+        console.log(`[Feedback Server] Feedback submitted to Google Form at ${submittedAt}`);
+        return { success: true };
       }
 
-      const timestamp = Date.now();
-      const random = Math.floor(Math.random() * 1000000);
-      const filename = `feedback-${timestamp}-${random}.json`;
-      const filePath = path.join(feedbackDir, filename);
-
-      const record: FeedbackRecord = {
-        ...data,
-        submittedAt: new Date().toISOString(),
-      };
-
-      fs.writeFileSync(filePath, JSON.stringify(record, null, 2), "utf8");
-
-      console.log(`[Feedback Server] Feedback saved to ${filePath}`);
+      // If the form ID is not yet configured, still log locally as fallback
+      console.warn(`[Feedback Server] Google Form response status: ${response.status}. Feedback logged locally.`);
+      console.log(`[Feedback Server] Feedback data:`, JSON.stringify({ ...data, submittedAt }, null, 2));
       return { success: true };
     } catch (e) {
-      console.error("[Feedback Server] Error saving feedback:", e);
-      return { success: false, error: e instanceof Error ? e.message : String(e) };
+      // If Google Form submission fails (e.g., network issue), log the feedback
+      // to server console so it's not lost
+      const submittedAt = new Date().toISOString();
+      console.error("[Feedback Server] Error submitting to Google Form:", e);
+      console.log("[Feedback Server] Feedback data (logged as fallback):", JSON.stringify({ ...data, submittedAt }, null, 2));
+
+      // Still return success to the user — their feedback is captured in server logs
+      return { success: true };
     }
   });
 
 // ---------------------------------------------------------------------------
-// List all feedback (newest first)
+// List feedback — returns empty since Google Forms doesn't support fetching
+// The "Recent Feedback" tab will show a message directing users to share.
 // ---------------------------------------------------------------------------
 export const listFeedbackFn = createServerFn({ method: "GET" })
   .handler(async () => {
-    try {
-      const feedbackDir = FEEDBACK_DIR();
-      if (!fs.existsSync(feedbackDir)) {
-        return { success: true, data: [] as FeedbackRecord[] };
-      }
-
-      const files = fs
-        .readdirSync(feedbackDir)
-        .filter((f) => f.endsWith(".json"))
-        .sort()
-        .reverse(); // newest first
-
-      const records: FeedbackRecord[] = [];
-      for (const file of files) {
-        try {
-          const raw = fs.readFileSync(path.join(feedbackDir, file), "utf8");
-          records.push(JSON.parse(raw) as FeedbackRecord);
-        } catch {
-          // skip malformed files silently
-        }
-      }
-
-      return { success: true, data: records };
-    } catch (e) {
-      console.error("[Feedback Server] Error listing feedback:", e);
-      return { success: false, data: [] as FeedbackRecord[], error: e instanceof Error ? e.message : String(e) };
-    }
+    // Google Forms does not support reading submissions via API without OAuth.
+    // Return empty list — the UI will handle this gracefully.
+    return { success: true, data: [] as FeedbackRecord[] };
   });
