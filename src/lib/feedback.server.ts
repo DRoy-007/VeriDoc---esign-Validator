@@ -33,16 +33,16 @@ export interface FeedbackRecord extends FeedbackPayload {
 //   - Email (Short answer)      → entry ID below
 //   - Submitted At (Short answer) → entry ID below
 // ---------------------------------------------------------------------------
-const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse";
+const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSez0o3hFgn-Ir4jn5RikGfi0OOO-ymZ4Ik0Yd2EfO8N7TX7CA/formResponse";
 
 // Replace these entry IDs with your actual Google Form field entry IDs
 const FORM_FIELD_IDS = {
-  category: "entry.XXXXXXXXX1",
-  rating: "entry.XXXXXXXXX2",
-  comments: "entry.XXXXXXXXX3",
-  name: "entry.XXXXXXXXX4",
-  email: "entry.XXXXXXXXX5",
-  submittedAt: "entry.XXXXXXXXX6",
+  category: "entry.1153008810",
+  rating: "entry.603151085",
+  comments: "entry.1956240354",
+  name: "entry.932156450",
+  email: "entry.1501609102",
+  submittedAt: "entry.1581344495",
 };
 
 // ---------------------------------------------------------------------------
