@@ -79,10 +79,10 @@ export function Landing({
   return (
     <>
       <section className="mx-auto mt-10 sm:mt-20 max-w-3xl text-center px-2">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl">Verify any Indian eSign.</h1>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl">Online PDF eSign Validator</h1>
         <p className="mx-auto mt-3 sm:mt-4 max-w-xl text-base sm:text-lg text-muted-foreground">
-          Instantly validate digitally signed PDFs against all official
-          Certifying Authorities. Secure server verification — your document is{" "}
+          Instantly <strong>verify PDF</strong> digital signatures and validate Indian eSigns online against all official
+          Certifying Authorities. A secure, free <strong>PDF sign checker</strong> — your document is{" "}
           <strong>never stored or shared</strong>.
         </p>
 
@@ -129,7 +129,7 @@ export function Landing({
               <div className="grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110 group-hover:bg-primary/20">
                 <UploadIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h3 className="mt-4 sm:mt-5 text-base sm:text-lg font-medium">Click or drag PDF to verify</h3>
+              <h2 className="mt-4 sm:mt-5 text-base sm:text-lg font-medium">Click or drag PDF to verify</h2>
               <div className="mt-1 text-xs sm:text-sm text-muted-foreground">
                 PDF only · up to 100 MB · processed locally
               </div>
