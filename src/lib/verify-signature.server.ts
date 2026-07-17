@@ -483,6 +483,44 @@ export async function validateChainPKI(
 // ---------------------------------------------------------------------------
 
 /**
+ * Parse a PDF date string (e.g. "D:20231215103000+05'30'") into a JS Date object.
+ */
+function parsePdfDate(pdfDate: string): Date | null {
+  try {
+    const cleanDate = pdfDate.replace(/^D:/, "").replace(/'/g, "");
+    if (cleanDate.length < 14) return null;
+    
+    const year = parseInt(cleanDate.substring(0, 4), 10);
+    const month = parseInt(cleanDate.substring(4, 6), 10) - 1;
+    const day = parseInt(cleanDate.substring(6, 8), 10);
+    const hours = parseInt(cleanDate.substring(8, 10), 10);
+    const minutes = parseInt(cleanDate.substring(10, 12), 10);
+    const seconds = parseInt(cleanDate.substring(12, 14), 10);
+    
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
+
+    let offsetMinutes = 0;
+    const tzStr = cleanDate.substring(14);
+    if (tzStr.startsWith('Z')) {
+      offsetMinutes = 0;
+    } else if (tzStr.startsWith('+') || tzStr.startsWith('-')) {
+      const sign = tzStr.startsWith('+') ? 1 : -1;
+      const tzHours = parseInt(tzStr.substring(1, 3), 10) || 0;
+      const tzMins = parseInt(tzStr.substring(3, 5), 10) || 0;
+      offsetMinutes = sign * (tzHours * 60 + tzMins);
+    }
+    
+    const d = new Date(Date.UTC(year, month, day, hours, minutes, seconds));
+    if (tzStr && tzStr !== 'Z') {
+      d.setUTCMinutes(d.getUTCMinutes() - offsetMinutes);
+    }
+    return d;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Run the complete verification pipeline on a PDF file.
  */
 export async function verifyPdfSignature(
@@ -578,7 +616,7 @@ export async function verifyPdfSignature(
       certNotAfter: certValidity.notAfter,
     };
 
-    // Also try to extract reason/location from the PDF sig dictionary
+    // Also try to extract reason/location/date from the PDF sig dictionary
     const pdfText = new TextDecoder("latin1").decode(fileBytes);
     const reasonMatch = pdfText.match(/\/Reason\s*\(([^)]*)\)/);
     if (reasonMatch) sigInfo.reason = reasonMatch[1];
@@ -586,6 +624,12 @@ export async function verifyPdfSignature(
     if (locationMatch) sigInfo.location = locationMatch[1];
     const contactMatch = pdfText.match(/\/ContactInfo\s*\(([^)]*)\)/);
     if (contactMatch) sigInfo.contactInfo = contactMatch[1];
+    
+    const mMatch = pdfText.match(/\/M\s*\(([^)]*)\)/);
+    if (mMatch && !sigInfo.signingTime) {
+      const parsedDate = parsePdfDate(mMatch[1]);
+      if (parsedDate) sigInfo.signingTime = parsedDate;
+    }
   }
 
   // ---------------------------------------------------------------------------

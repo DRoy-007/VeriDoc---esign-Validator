@@ -98,10 +98,30 @@ function buildReport(
     }
   }
 
-  // Format signing date (full ISO string so client can format it)
+  // Format signing date to YYYY.MM.DD HH:mm:ss IST
   let signed_on: string | null = null;
   if (result.signatureInfo?.signingTime) {
-    signed_on = result.signatureInfo.signingTime.toISOString();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZoneName: 'short'
+    }).formatToParts(result.signatureInfo.signingTime);
+
+    const p: Record<string, string> = {};
+    for (const part of parts) {
+      p[part.type] = part.value;
+    }
+    
+    let hr = p.hour;
+    if (hr === '24') hr = '00';
+
+    signed_on = `${p.year}.${p.month}.${p.day} ${hr}:${p.minute}:${p.second} ${p.timeZoneName || 'IST'}`;
   }
 
   return {

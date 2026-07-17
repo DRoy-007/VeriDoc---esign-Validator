@@ -206,31 +206,9 @@ export async function stampPdf(
     lines.push({ text: sanitize(`Location: ${report.location}`), bold: false });
   }
 
-  // Signed date and time with timezone
+  // Signed date and time
   if (report.signed_on) {
-    const d = new Date(report.signed_on);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    const hours = d.getHours().toString().padStart(2, '0');
-    const minutes = d.getMinutes().toString().padStart(2, '0');
-    const seconds = d.getSeconds().toString().padStart(2, '0');
-    // Get timezone abbreviation
-    const tzOffset = d.getTimezoneOffset();
-    const tzHours = Math.abs(Math.floor(tzOffset / 60));
-    const tzMins = Math.abs(tzOffset % 60);
-    const tzSign = tzOffset <= 0 ? '+' : '-';
-    const tzStr = `UTC${tzSign}${tzHours.toString().padStart(2, '0')}:${tzMins.toString().padStart(2, '0')}`;
-    // Try to get a short timezone name
-    let tzName = tzStr;
-    try {
-      const parts = new Intl.DateTimeFormat('en', { timeZoneName: 'short' }).formatToParts(d);
-      const tzPart = parts.find(p => p.type === 'timeZoneName');
-      if (tzPart) tzName = tzPart.value;
-    } catch {
-      // fallback to UTC offset string
-    }
-    lines.push({ text: `Date: ${year}.${month}.${day} ${hours}:${minutes}:${seconds} ${tzName}`, bold: false });
+    lines.push({ text: `Date: ${report.signed_on}`, bold: false });
   }
 
   // Certificate Authority and Algorithm intentionally omitted to match standard PDF reader visual metadata
