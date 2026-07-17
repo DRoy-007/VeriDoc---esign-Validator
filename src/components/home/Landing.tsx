@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { UploadIcon, LockIcon, StampIcon, ReportIcon, ShieldAlertIcon, XIcon, ClockIcon, CheckIcon } from "../icons";
 import { TRUSTED_INDIAN_CAS } from "@/lib/trusted-cas";
-import { FAQ } from "@/components/home/FAQ";
 
 function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
@@ -240,7 +239,6 @@ export function Landing({
         </div>
       </section>
 
-      <FAQ />
       <section id="faq" className="mt-10 sm:mt-16 scroll-mt-20 border-t border-border/60 pt-10 sm:pt-16">
         <h2 className="text-xl sm:text-2xl">Frequently Asked Questions</h2>
         <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
