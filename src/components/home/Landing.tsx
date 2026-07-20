@@ -275,7 +275,7 @@ export function Landing({
               <strong>Yes, most likely.</strong> Certificate expiry means the signer's digital certificate has passed its validity period. However, this does <strong>not</strong> mean the signature was invalid at the time of signing.
             </p>
             <p className="mt-2">
-              VeriDoc automatically validates signatures even when the certificate has expired. If the signature is cryptographically intact and the certificate chains to a trusted CA, the result will show as <strong>Verified</strong> with a disclaimer noting the certificate expiry date.
+              PDFVerify automatically validates signatures even when the certificate has expired. If the signature is cryptographically intact and the certificate chains to a trusted CA, the result will show as <strong>Verified</strong> with a disclaimer noting the certificate expiry date.
             </p>
             <p className="mt-2">In practice:</p>
             <ul className="mt-1 list-disc list-inside space-y-1">
@@ -299,7 +299,7 @@ export function Landing({
               <li><strong>Download the CA root certificate</strong> from the CA's official website and manually add it if the embedded certificate isn't available.</li>
             </ul>
             <p className="mt-3 text-muted-foreground text-xs">
-              Note: Manually trusted certificates are stored in your session. Official root certificates from CCA-licensed CAs are built into VeriDoc permanently.
+              Note: Manually trusted certificates are stored in your session. Official root certificates from CCA-licensed CAs are built into PDFVerify permanently.
             </p>
           </FaqItem>
 

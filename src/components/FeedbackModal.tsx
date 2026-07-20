@@ -146,7 +146,7 @@ function FeedbackList() {
         <MessageSquare className="h-10 w-10 opacity-40" />
         <div className="text-center space-y-1">
           <p className="text-sm font-medium text-foreground/80">No feedback yet</p>
-          <p className="text-xs">Be the first to share your experience with VeriDoc.</p>
+          <p className="text-xs">Be the first to share your experience with PDFVerify.</p>
         </div>
       </div>
     );
@@ -227,7 +227,7 @@ function FeedbackForm({ onSubmitted }: { onSubmitted: () => void }) {
 
       if (res.success) {
         toast.success("Feedback submitted", {
-          description: "Thank you for helping us improve VeriDoc.",
+          description: "Thank you for helping us improve PDFVerify.",
           icon: <CheckCircle2 className="h-5 w-5 text-success" />,
         });
         setCategory("suggestion");
@@ -415,7 +415,7 @@ export function FeedbackModal({ open, onOpenChange }: FeedbackModalProps) {
             <DialogTitle className="text-xl sm:text-2xl font-serif">Feedback</DialogTitle>
           </div>
           <DialogDescription className="text-sm text-muted-foreground">
-            View what others have shared or submit your own feedback to help us improve VeriDoc.
+            View what others have shared or submit your own feedback to help us improve PDFVerify.
           </DialogDescription>
         </DialogHeader>
 

@@ -227,7 +227,7 @@ export function Result({
         <div>
           <h4 className="font-serif text-lg font-semibold">How was your experience?</h4>
           <p className="text-sm text-muted-foreground mt-1">
-            Let us know if you found VeriDoc helpful or if you encountered any issues.
+            Let us know if you found PDFVerify helpful or if you encountered any issues.
           </p>
         </div>
         <button

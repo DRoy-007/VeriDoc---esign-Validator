@@ -44,7 +44,7 @@ bun install
 
 ```bash
 git clone <your-repo-url>
-cd VeriDoc-eSign-Validator
+cd PDFVerify
 bun install
 bun run dev
 ```

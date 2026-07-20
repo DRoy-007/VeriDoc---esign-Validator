@@ -26,7 +26,7 @@ export function Footer() {
             >
               Feedback
             </button>
-            <a href="https://github.com/DRoy-007/VeriDoc---esign-Validator" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">Open Source</a>
+            <a href="https://github.com/DRoy-007/PDFVerify" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">Open Source</a>
           </span>
         </div>
       </div>

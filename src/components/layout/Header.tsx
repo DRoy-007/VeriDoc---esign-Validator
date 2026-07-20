@@ -10,11 +10,11 @@ export function Header() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="grid h-10 w-10 overflow-hidden place-items-center rounded-lg shadow-sm bg-transparent">
-            <img src="/logo.png" alt="VeriDoc Logo" className="h-full w-full object-contain" />
+            <img src="/logo.png" alt="PDFVerify Logo" className="h-full w-full object-contain" />
           </div>
           <div>
             <div className="font-serif text-base sm:text-lg leading-none">
-              VeriDoc <span className="font-sans text-xs sm:text-sm text-muted-foreground">- eSign Validator</span>
+              PDFVerify <span className="font-sans text-xs sm:text-sm text-muted-foreground">- eSign Validator</span>
             </div>
             <div className="text-xs text-muted-foreground hidden sm:block">Verify Indian digitally signed PDFs</div>
           </div>
