@@ -1,6 +1,6 @@
-# VeriDoc eSign Validator
+# PDFVerify
 
-VeriDoc eSign Validator is a web app for verifying digitally signed PDF documents, especially Indian government and institutional eSigned files. It helps users quickly determine whether a PDF is authentic, intact, and trusted by checking the signature, certificate chain, and document integrity.
+PDFVerify is a web app for verifying digitally signed PDF documents, especially Indian government and institutional eSigned files. It helps users quickly determine whether a PDF is authentic, intact, and trusted by checking the signature, certificate chain, and document integrity.
 
 ## What it does
 
