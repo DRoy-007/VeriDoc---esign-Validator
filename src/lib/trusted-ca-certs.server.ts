@@ -149,6 +149,7 @@ export function isKnownIndianCA(cert: pkijs.Certificate): boolean {
   if (all.includes("cdac") || all.includes("c-dac")) return true;
   if (all.includes("idrbt")) return true;
   if (all.includes("cca india") || all.includes("controller of cert")) return true;
+  if (all.includes("signx") || all.includes("futuriq")) return true;
   
   return false;
 }
@@ -177,6 +178,8 @@ export function identifyCA(cert: pkijs.Certificate): { name: string; shortName: 
     return { name: "IDRBT CA", shortName: "IDRBT" };
   if (all.includes("cca india") || all.includes("controller of cert"))
     return { name: "CCA India (Root)", shortName: "CCA India" };
+  if (all.includes("signx") || all.includes("futuriq"))
+    return { name: "SignX (FuturiQ Systems)", shortName: "SignX" };
 
   const fallbackName = getIssuerCN(cert) || getIssuerOrg(cert) || "Unknown CA";
   return { name: fallbackName, shortName: fallbackName };

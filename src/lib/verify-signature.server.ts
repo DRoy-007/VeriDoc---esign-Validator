@@ -466,7 +466,17 @@ export async function validateChainPKI(
            return { trusted: true, trustedCA: identifyCA(cert), revoked: false, notes };
         }
         for (const root of trustedRoots) {
-          if (cert.issuer.isEqual(root.subject) || cert.subject.isEqual(root.subject)) {
+          const rootCn = getCertificateCN(root).toLowerCase();
+          const rootOrg = getCertificateOrg(root).toLowerCase();
+          const certIssuerCn = getIssuerCN(cert).toLowerCase();
+          const certIssuerOrg = getIssuerOrg(cert).toLowerCase();
+          const certSubjectCn = getCertificateCN(cert).toLowerCase();
+          const certSubjectOrg = getCertificateOrg(cert).toLowerCase();
+
+          const matchesIssuer = (certIssuerCn && certIssuerCn === rootCn) || (certIssuerOrg && certIssuerOrg === rootOrg);
+          const matchesSubject = (certSubjectCn && certSubjectCn === rootCn) || (certSubjectOrg && certSubjectOrg === rootOrg);
+
+          if (cert.issuer.isEqual(root.subject) || cert.subject.isEqual(root.subject) || matchesIssuer || matchesSubject) {
              notes.push("Auto-trusted fallback: Certificate issuer matches a trusted root in the local store.");
              return { trusted: true, trustedCA: identifyCA(root), revoked: false, notes };
           }
@@ -490,7 +500,17 @@ export async function validateChainPKI(
          return { trusted: true, trustedCA: identifyCA(cert), revoked: false, notes };
       }
       for (const root of trustedRoots) {
-        if (cert.issuer.isEqual(root.subject) || cert.subject.isEqual(root.subject)) {
+        const rootCn = getCertificateCN(root).toLowerCase();
+        const rootOrg = getCertificateOrg(root).toLowerCase();
+        const certIssuerCn = getIssuerCN(cert).toLowerCase();
+        const certIssuerOrg = getIssuerOrg(cert).toLowerCase();
+        const certSubjectCn = getCertificateCN(cert).toLowerCase();
+        const certSubjectOrg = getCertificateOrg(cert).toLowerCase();
+
+        const matchesIssuer = (certIssuerCn && certIssuerCn === rootCn) || (certIssuerOrg && certIssuerOrg === rootOrg);
+        const matchesSubject = (certSubjectCn && certSubjectCn === rootCn) || (certSubjectOrg && certSubjectOrg === rootOrg);
+
+        if (cert.issuer.isEqual(root.subject) || cert.subject.isEqual(root.subject) || matchesIssuer || matchesSubject) {
            notes.push("Auto-trusted fallback: Certificate issuer matches a trusted root in the local store, bypassing PKI error.");
            return { trusted: true, trustedCA: identifyCA(root), revoked: false, notes };
         }
