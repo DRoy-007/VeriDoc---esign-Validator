@@ -87,6 +87,16 @@ export async function stampPdf(
   let stampW = 320;
   let stampH = 180;
 
+  // Completely strip digital signature metadata so any pdf reader doesn't show
+  // "At least one signature is invalid" after we modify the PDF to stamp it.
+  const catalog = pdf.catalog;
+  if (catalog.has(PDFName.of("Perms"))) {
+    catalog.delete(PDFName.of("Perms"));
+  }
+  if (catalog.has(PDFName.of("AcroForm"))) {
+    catalog.delete(PDFName.of("AcroForm")); // Removes all signature/form fields
+  }
+
   // Find the signature annotation rect for positioning, then REMOVE all
   // signature widget annotations so the original e-sign visual is completely
   // eliminated. This is a stamped copy — the original signature structure
