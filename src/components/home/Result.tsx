@@ -170,6 +170,24 @@ export function Result({
           </div>
         </div>
       </div>
+      {report.status === "UNTRUSTED" && report.untrustedCert && (
+        <div className="rounded-xl border border-warning/50 bg-warning/10 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div>
+            <h3 className="font-medium text-warning-foreground">Untrusted Issuer: {report.untrustedCert.name}</h3>
+            <p className="mt-1 text-sm text-foreground/80 max-w-xl">
+              This certificate is embedded in the PDF but is not in your local trust store. 
+              <strong> Disclaimer: </strong> Only add this certificate to your trust store if you explicitly trust the issuer and are sure the document is authentic.
+            </p>
+          </div>
+          <button
+            onClick={handleTrustCertificate}
+            disabled={trusting}
+            className="shrink-0 rounded-lg bg-warning px-4 py-2 text-sm font-medium text-warning-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60 cursor-pointer"
+          >
+            {trusting ? "Adding..." : "Add to Trusted CAs"}
+          </button>
+        </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <DetailCard title="Document">
@@ -189,25 +207,6 @@ export function Result({
           <Row k="Integrity" v={report.integrity} />
         </DetailCard>
       </div>
-
-      {report.status === "UNTRUSTED" && report.untrustedCert && (
-        <div className="rounded-xl border border-warning/50 bg-warning/10 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div>
-            <h3 className="font-medium text-warning-foreground">Untrusted Issuer: {report.untrustedCert.name}</h3>
-            <p className="mt-1 text-sm text-foreground/80 max-w-xl">
-              This certificate is embedded in the PDF but is not in your local trust store. 
-              <strong> Disclaimer: </strong> Only add this certificate to your trust store if you explicitly trust the issuer and are sure the document is authentic.
-            </p>
-          </div>
-          <button
-            onClick={handleTrustCertificate}
-            disabled={trusting}
-            className="shrink-0 rounded-lg bg-warning px-4 py-2 text-sm font-medium text-warning-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60 cursor-pointer"
-          >
-            {trusting ? "Adding..." : "Add to Trusted CAs"}
-          </button>
-        </div>
-      )}
 
       <DetailCard title="Verification notes">
         <ul className="space-y-1.5 text-sm text-foreground/80">
