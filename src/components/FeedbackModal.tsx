@@ -153,7 +153,7 @@ function FeedbackList() {
   }
 
   return (
-    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 -mr-1">
+    <div className="space-y-3 max-h-[400px] overflow-y-auto overflow-x-hidden pr-1">
       {entries.map((entry, i) => (
         <div
           key={i}
@@ -431,11 +431,11 @@ export function FeedbackModal({ open, onOpenChange }: FeedbackModalProps) {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="view" className="mt-4 min-h-0 overflow-y-auto flex-1">
+          <TabsContent value="view" className="mt-4 min-h-0 overflow-y-auto overflow-x-hidden flex-1">
             <FeedbackList key={refreshKey} />
           </TabsContent>
 
-          <TabsContent value="submit" className="mt-4 min-h-0 overflow-y-auto flex-1">
+          <TabsContent value="submit" className="mt-4 min-h-0 overflow-y-auto overflow-x-hidden flex-1">
             <FeedbackForm onSubmitted={handleSubmitted} />
           </TabsContent>
         </Tabs>
