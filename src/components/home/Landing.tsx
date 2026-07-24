@@ -217,8 +217,14 @@ export function Landing({
           body="Machine-readable JSON with signer, issuer, date, and integrity result for your records."
         />
       </section>
+    </>
+  );
+}
 
-      <section id="trusted" className="mt-10 sm:mt-16 scroll-mt-20">
+export function InfoSections() {
+  return (
+    <>
+      <section id="trusted" className="mt-10 sm:mt-16 scroll-mt-20 border-t border-border/60 pt-10 sm:pt-16">
         <h2 className="text-xl sm:text-2xl">Trusted Indian Certifying Authorities</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           We match against roots issued by CCA India licensed CAs.

@@ -5,7 +5,7 @@ import { IndiaBackdrop } from "@/components/IndiaBackdrop";
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Landing } from "@/components/home/Landing";
+import { Landing, InfoSections } from "@/components/home/Landing";
 import { Processing, STEPS } from "@/components/home/Processing";
 import { Result } from "@/components/home/Result";
 import { ErrorCard } from "@/components/home/ErrorCard";
@@ -160,6 +160,8 @@ function Home() {
           className="hidden"
           onChange={(e) => onFiles(e.target.files)}
         />
+
+        <InfoSections />
       </main>
 
       <Footer />
