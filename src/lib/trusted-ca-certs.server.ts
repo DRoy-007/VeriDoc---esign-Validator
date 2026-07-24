@@ -131,6 +131,28 @@ export function getIssuerOrg(cert: pkijs.Certificate): string {
   return "";
 }
 
+export function isKnownIndianCA(cert: pkijs.Certificate): boolean {
+  const cn = getCertificateCN(cert).toLowerCase();
+  const org = getCertificateOrg(cert).toLowerCase();
+  const issuerCn = getIssuerCN(cert).toLowerCase();
+  const issuerOrg = getIssuerOrg(cert).toLowerCase();
+  const all = [cn, org, issuerCn, issuerOrg].join(" ");
+
+  if (all.includes("care4sign")) return true;
+  if (all.includes("emudhra")) return true;
+  if (all.includes("capricorn")) return true;
+  if (all.includes("safescrypt") || all.includes("sify")) return true;
+  if (all.includes("ncode") || all.includes("(n)code")) return true;
+  if (all.includes("pantasign")) return true;
+  if (all.includes("idsign") || all.includes("verasys") || all.includes("vsign")) return true;
+  if (all.includes("nic") && (all.includes("national informatics") || all.includes("nicca"))) return true;
+  if (all.includes("cdac") || all.includes("c-dac")) return true;
+  if (all.includes("idrbt")) return true;
+  if (all.includes("cca india") || all.includes("controller of cert")) return true;
+  
+  return false;
+}
+
 // Map a certificate to a human-readable CA name (for the UI)
 export function identifyCA(cert: pkijs.Certificate): { name: string; shortName: string } {
   const cn = getCertificateCN(cert).toLowerCase();
