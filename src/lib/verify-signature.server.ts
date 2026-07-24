@@ -459,11 +459,17 @@ export async function validateChainPKI(
          return { trusted: false, trustedCA: null, revoked: true, notes };
       }
 
-      // AUTO-TRUST KNOWN CAs IF PKI FAILS (e.g. missing intermediates)
+      // AUTO-TRUST KNOWN CAs OR IF ISSUER IN TRUSTED ROOTS
       for (const cert of [signerCert, ...embeddedCerts]) {
         if (isKnownIndianCA(cert)) {
            notes.push("Auto-trusted fallback: Certificate is issued by a recognized Indian Licensed CA.");
            return { trusted: true, trustedCA: identifyCA(cert), revoked: false, notes };
+        }
+        for (const root of trustedRoots) {
+          if (cert.issuer.isEqual(root.subject) || cert.subject.isEqual(root.subject)) {
+             notes.push("Auto-trusted fallback: Certificate issuer matches a trusted root in the local store.");
+             return { trusted: true, trustedCA: identifyCA(root), revoked: false, notes };
+          }
         }
       }
 
@@ -477,11 +483,17 @@ export async function validateChainPKI(
       return { trusted: false, trustedCA: null, revoked: true, notes };
     }
 
-    // AUTO-TRUST KNOWN CAs IF PKI THROWS (e.g. CRL fetch failed)
+    // AUTO-TRUST KNOWN CAs OR IF ISSUER IN TRUSTED ROOTS
     for (const cert of [signerCert, ...embeddedCerts]) {
       if (isKnownIndianCA(cert)) {
          notes.push("Auto-trusted fallback: Certificate is issued by a recognized Indian Licensed CA, bypassing PKI error.");
          return { trusted: true, trustedCA: identifyCA(cert), revoked: false, notes };
+      }
+      for (const root of trustedRoots) {
+        if (cert.issuer.isEqual(root.subject) || cert.subject.isEqual(root.subject)) {
+           notes.push("Auto-trusted fallback: Certificate issuer matches a trusted root in the local store, bypassing PKI error.");
+           return { trusted: true, trustedCA: identifyCA(root), revoked: false, notes };
+        }
       }
     }
 
